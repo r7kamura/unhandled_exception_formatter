@@ -1,37 +1,77 @@
 # UnhandledExceptionFormatter
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/unhandled_exception_formatter`. To experiment with that code, run `bin/console` for an interactive prompt.
+Custom RSpec formatter to output unhandled exception.
 
-TODO: Delete this and the text above, and describe your gem
+## Background
+
+To rescue exceptions raised from application,
+we often tend to write code like:
+
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from ::Exception, :return_internal_server_error
+end
+```
+
+While this is convenient, it also masks the actual exceptions.
+This makes it difficult to debug when unintended exceptions occur during testing.
+
+To mitigate this problem,
+I thought it would be nice to be able to output uncaught exceptions by custom RSpec formatter.
 
 ## Installation
 
 Install the gem and add to the application's Gemfile by executing:
 
-    $ bundle add unhandled_exception_formatter
+```bash
+bundle add unhandled_exception_formatter
+```
 
 If bundler is not being used to manage dependencies, install the gem by executing:
 
-    $ gem install unhandled_exception_formatter
+```bash
+gem install unhandled_exception_formatter
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+### Setup
 
-## Development
+This is an example for Rails application.
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from ::Exception, :return_internal_server_error
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+  if ::Rails.env.test?
+    rescue_from ::Exception, :store_unhandled_exception
 
-## Contributing
+    before_action :clear_unhandled_exception
+  end
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/unhandled_exception_formatter. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/unhandled_exception_formatter/blob/main/CODE_OF_CONDUCT.md).
+  private
 
-## License
+  def clear_unhandled_exception
+    ::UnhandledExceptionRspecFormatter.unhandled_exception = nil
+  end
 
-The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+  # @param [Exception] exception
+  # @raise [Exception]
+  def store_unhandled_exception(exception)
+    ::UnhandledExceptionRspecFormatter.unhandled_exception = exception
+    raise exception
+  end
+end
+```
 
-## Code of Conduct
+### Run
 
-Everyone interacting in the UnhandledExceptionFormatter project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/unhandled_exception_formatter/blob/main/CODE_OF_CONDUCT.md).
+This formatter only outputs information about unhandled exceptions,
+so use multiple formatter together to get the output you want.
+
+```
+rspec --format doc --format UnhandledExceptionFormatter
+```
+
+Note: RSpec automatically `require 'unhandled_exception_formatter'` from `--format` option,
+so there is no need to do this by your side.
