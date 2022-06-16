@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require_relative "unhandled_exception_formatter/version"
+require_relative 'unhandled_exception_formatter/version'
 
 module UnhandledExceptionFormatter
   class Error < StandardError; end
