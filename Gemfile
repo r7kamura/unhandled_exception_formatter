@@ -7,3 +7,4 @@ gemspec
 
 gem 'rake'
 gem 'rubocop'
+gem 'rubocop-rake'
