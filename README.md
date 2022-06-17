@@ -1,6 +1,7 @@
 # UnhandledExceptionFormatter
 
 [![test](https://github.com/r7kamura/unhandled_exception_formatter/actions/workflows/test.yml/badge.svg)](https://github.com/r7kamura/unhandled_exception_formatter/actions/workflows/test.yml)
+[![Gem Version](https://badge.fury.io/rb/unhandled_exception_formatter.svg)](https://rubygems.org/gems/unhandled_exception_formatter)
 
 Custom RSpec formatter to output unhandled exception.
 
