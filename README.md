@@ -1,5 +1,7 @@
 # UnhandledExceptionFormatter
 
+[![test](https://github.com/r7kamura/unhandled_exception_formatter/actions/workflows/test.yml/badge.svg)](https://github.com/r7kamura/unhandled_exception_formatter/actions/workflows/test.yml)
+
 Custom RSpec formatter to output unhandled exception.
 
 ## Background
